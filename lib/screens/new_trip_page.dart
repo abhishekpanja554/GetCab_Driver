@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -28,6 +29,31 @@ class _NewTripPageState extends State<NewTripPage> {
   Set<Polyline> _polylines = Set<Polyline>();
   List<LatLng> polylinesCoordinatesList = [];
   PolylinePoints polylinePoints = PolylinePoints();
+
+  @override
+  void initState() {
+    acceptTrip();
+    super.initState();
+  }
+
+  void acceptTrip(){
+    String rideId = widget.tripDetails.rideId;
+    rideRef = FirebaseDatabase.instance.reference().child('rideRequest/$rideId');
+    rideRef.child('status').set('accepted');
+    rideRef.child('driver_name').set(currentDriverInfo.fullName);
+    rideRef.child('phone').set(currentDriverInfo.phone);
+    rideRef.child('car_model').set(currentDriverInfo.carModel);
+    rideRef.child('car_color').set(currentDriverInfo.carModel);
+    rideRef.child('vehicle_number').set(currentDriverInfo.vehicleNumber);
+    rideRef.child('driver_id').set(currentDriverInfo.id);
+
+    Map locationMap = {
+      'latitude' : currentPosition.latitude.toString(),
+      'longitude' : currentPosition.longitude.toString(),
+    };
+
+    rideRef.child('driver_location').set(locationMap);
+  }
 
   Future<void> getDirection(LatLng pickLatLng, LatLng destLatLng) async {
     showDialog(
@@ -219,7 +245,7 @@ class _NewTripPageState extends State<NewTripPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Abhishek Panja',
+                            'widget.tripDetails.riderName',
                             style: TextStyle(
                               fontFamily: 'Brand-Bold',
                               fontSize: 22,
@@ -250,7 +276,7 @@ class _NewTripPageState extends State<NewTripPage> {
                           Expanded(
                             child: Container(
                               child: Text(
-                                'widget.tripDetails.pickupAddress',
+                                widget.tripDetails.pickupAddress,
                                 style: TextStyle(fontSize: 18),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -275,7 +301,7 @@ class _NewTripPageState extends State<NewTripPage> {
                           Expanded(
                             child: Container(
                               child: Text(
-                                'tripDetails.destinationAddress',
+                                widget.tripDetails.destinationAddress,
                                 style: TextStyle(fontSize: 18),
                               ),
                             ),

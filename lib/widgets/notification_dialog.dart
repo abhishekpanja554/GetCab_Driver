@@ -4,6 +4,7 @@ import 'package:toast/toast.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/data_models/trip_details.dart';
 import 'package:uber_clone_driver/globalVariables.dart';
+import 'package:uber_clone_driver/helpers/helper_methods.dart';
 import 'package:uber_clone_driver/screens/new_trip_page.dart';
 import 'package:uber_clone_driver/widgets/TaxiOutlineButton.dart';
 import 'package:uber_clone_driver/widgets/brand_divider.dart';
@@ -47,6 +48,7 @@ class NotificationDialog extends StatelessWidget {
 
       if (thisRideId == tripDetails.rideId) {
         newRideRef.set('accepted');
+        HelperMethods.disableLocationSubscription();
         Navigator.push(
           context,
           MaterialPageRoute(
