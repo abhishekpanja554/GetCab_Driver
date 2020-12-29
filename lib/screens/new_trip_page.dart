@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/data_models/trip_details.dart';
 import 'package:uber_clone_driver/helpers/helper_methods.dart';
+import 'package:uber_clone_driver/helpers/map_toolkit_helper.dart';
 import 'package:uber_clone_driver/widgets/progress_dialog.dart';
 import 'package:uber_clone_driver/widgets/taxi_button.dart';
 
@@ -192,6 +193,8 @@ class _NewTripPageState extends State<NewTripPage> {
   }
 
   void getLocationUpdates() {
+    LatLng oldPos = LatLng(0, 0);
+
     carPositionStream = Geolocator.getPositionStream(
       desiredAccuracy: LocationAccuracy.bestForNavigation,
       distanceFilter: 4,
@@ -200,11 +203,20 @@ class _NewTripPageState extends State<NewTripPage> {
       currentPosition = position;
       carPosition = position;
       LatLng pos = LatLng(position.latitude, position.longitude);
+
+      double rotation = MapToolkitHelper.getMarkerRotation(
+        oldPos.latitude,
+        oldPos.longitude,
+        pos.latitude,
+        pos.longitude,
+      );
+
       Marker carMarker = Marker(
         markerId: MarkerId('moving'),
         position: pos,
         icon: movingCarIcon,
         infoWindow: InfoWindow(title: 'Current Location'),
+        rotation: rotation,
       );
 
       setState(() {
@@ -216,6 +228,8 @@ class _NewTripPageState extends State<NewTripPage> {
         _markers.removeWhere((element) => element.markerId.value == 'moving');
         _markers.add(carMarker);
       });
+
+      oldPos = pos;      
     });
   }
 
