@@ -36,6 +36,10 @@ class _NewTripPageState extends State<NewTripPage> {
       LocationOptions(accuracy: LocationAccuracy.bestForNavigation);
   Position carPosition;
   BitmapDescriptor movingCarIcon;
+  String driverStatus = 'accepted';
+  String durationString = '';
+
+  bool isdirectionRequesting = false;
 
   void createMarker() {
     if (movingCarIcon == null) {
@@ -229,8 +233,46 @@ class _NewTripPageState extends State<NewTripPage> {
         _markers.add(carMarker);
       });
 
-      oldPos = pos;      
+      oldPos = pos;
+
+      updateTripDetails();
+
+      Map locationMap = {
+        'latitude': carPosition.latitude,
+        'longitude': carPosition.longitude,
+      };
+
+      rideRef.child('driver_location').set(locationMap);
     });
+  }
+
+  void updateTripDetails() async {
+    if (!isdirectionRequesting) {
+      isdirectionRequesting = true;
+
+      if (carPosition == null) {
+        return;
+      }
+      LatLng startLatLng = LatLng(carPosition.latitude, carPosition.longitude);
+      LatLng destLatLng;
+
+      if (driverStatus == 'accepted') {
+        destLatLng = widget.tripDetails.pickupCoordinates;
+      } else {
+        destLatLng = widget.tripDetails.destinationCoordinates;
+      }
+
+      var directionDetails =
+          await HelperMethods.getDirectionDetails(startLatLng, destLatLng);
+
+      if (directionDetails != null) {
+        setState(() {
+          durationString = directionDetails.durationText;
+        });
+      }
+
+      isdirectionRequesting = false;
+    }
   }
 
   @override
@@ -296,7 +338,7 @@ class _NewTripPageState extends State<NewTripPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '14 mins',
+                        durationString,
                         style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Brand-Bold',
