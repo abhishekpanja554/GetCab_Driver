@@ -17,13 +17,7 @@ class NotificationDialog extends StatelessWidget {
 
   void checkAvailability(context) {
     //show please wait dialog
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) => ProgressDialog(
-        status: 'Accepting Request',
-      ),
-    );
+    HelperMethods.showProgressDialog(context);
 
     DatabaseReference newRideRef = FirebaseDatabase.instance
         .reference()

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_clone_driver/data_models/trip_details.dart';
 import 'package:uber_clone_driver/globalVariables.dart';
+import 'package:uber_clone_driver/helpers/helper_methods.dart';
 import 'package:uber_clone_driver/widgets/notification_dialog.dart';
 import 'package:uber_clone_driver/widgets/progress_dialog.dart';
 
@@ -33,13 +34,7 @@ class PushNotificatioService {
 
   void getRideInfo(String rideId, context) {
     //show please wait dialog
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) => ProgressDialog(
-        status: 'Fetching Details',
-      ),
-    );
+    HelperMethods.showProgressDialog(context);
 
     DatabaseReference rideRef =
         FirebaseDatabase.instance.reference().child('rideRequest/$rideId');
@@ -78,13 +73,7 @@ class PushNotificatioService {
         tripDetails.pickupCoordinates = LatLng(pickupLat, pickupLng);
         tripDetails.paymentMethod = paymentMethod;
 
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) => NotificationDialog(
-            tripDetails: tripDetails,
-          ),
-        );
+        HelperMethods.showProgressDialog(context);
       }
     });
   }

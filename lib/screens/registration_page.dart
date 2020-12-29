@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/globalVariables.dart';
+import 'package:uber_clone_driver/helpers/helper_methods.dart';
 import 'package:uber_clone_driver/screens/login_page.dart';
 import 'package:uber_clone_driver/screens/main_page.dart';
 import 'package:uber_clone_driver/screens/vehicleInfo_page.dart';
@@ -37,13 +38,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   void registerUser() async {
     //show please wait dialog
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) => ProgressDialog(
-        status: 'Signing you up',
-      ),
-    );
+    HelperMethods.showProgressDialog(context);
     UserCredential userCredential = await _auth
         .createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text)

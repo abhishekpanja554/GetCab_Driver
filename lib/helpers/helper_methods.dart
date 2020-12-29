@@ -1,9 +1,11 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_clone_driver/data_models/direction_details.dart';
 import 'package:uber_clone_driver/helpers/network_helper.dart';
+import 'package:uber_clone_driver/widgets/progress_dialog.dart';
 
 import '../globalVariables.dart';
 
@@ -61,5 +63,15 @@ class HelperMethods {
   static void enableLocationSubscription(){
     positionStream.resume();
     Geofire.setLocation(currentUser.uid, currentPosition.latitude, currentPosition.longitude);
+  }
+
+  static void showProgressDialog(context){
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => ProgressDialog(
+        status: 'Please wait...',
+      ),
+    );
   }
 }

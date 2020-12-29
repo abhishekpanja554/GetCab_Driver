@@ -25,21 +25,41 @@ class NewTripPage extends StatefulWidget {
 
 class _NewTripPageState extends State<NewTripPage> {
   GoogleMapController tripMapController;
+
   Completer<GoogleMapController> _completer = Completer();
+
   Set<Marker> _markers = Set<Marker>();
+
   Set<Circle> _circles = Set<Circle>();
+
   Set<Polyline> _polylines = Set<Polyline>();
+
   List<LatLng> polylinesCoordinatesList = [];
+
   PolylinePoints polylinePoints = PolylinePoints();
+
   Geolocator geolocator = Geolocator();
+
   LocationOptions locationOptions =
       LocationOptions(accuracy: LocationAccuracy.bestForNavigation);
+
   Position carPosition;
+
   BitmapDescriptor movingCarIcon;
+
   String driverStatus = 'accepted';
+
   String durationString = '';
 
   bool isdirectionRequesting = false;
+
+  String buttonTitle = 'ARRIVED';
+
+  Color buttonColor = BrandColors.colorGreen;
+
+  Timer timer;
+
+  int timeCounter = 0;
 
   void createMarker() {
     if (movingCarIcon == null) {
@@ -83,13 +103,7 @@ class _NewTripPageState extends State<NewTripPage> {
   }
 
   Future<void> getDirection(LatLng pickLatLng, LatLng destLatLng) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) => ProgressDialog(
-        status: 'Please wait...',
-      ),
-    );
+    HelperMethods.showProgressDialog(context);
 
     var thisDetails =
         await HelperMethods.getDirectionDetails(pickLatLng, destLatLng);
@@ -244,6 +258,13 @@ class _NewTripPageState extends State<NewTripPage> {
 
       rideRef.child('driver_location').set(locationMap);
     });
+  }
+
+  void startTimer(){
+    const interval = Duration(seconds: 1);
+    timer = Timer.periodic(interval, (timer) {
+      timeCounter++;
+     });
   }
 
   void updateTripDetails() async {
@@ -419,9 +440,35 @@ class _NewTripPageState extends State<NewTripPage> {
                         height: 25,
                       ),
                       TaxiButton(
-                        buttonText: 'ARRIVED',
-                        color: BrandColors.colorGreen,
-                        onPressed: () {},
+                        buttonText: buttonTitle,
+                        color: buttonColor,
+                        onPressed: () async {
+                          if(driverStatus == 'accepted'){
+                            driverStatus = 'arrived';
+                            rideRef.child('status').set('arrived');
+
+                            setState(() {
+                              buttonTitle = 'START TRIP';
+                              buttonColor = BrandColors.colorAccentPurple;
+                            });
+
+                            HelperMethods.showProgressDialog(context);
+
+                            await getDirection(widget.tripDetails.pickupCoordinates, widget.tripDetails.destinationCoordinates);
+
+                            Navigator.pop(context);
+                          }else if(driverStatus == 'arrived'){
+                            driverStatus = 'onTrip';
+                            rideRef.child('status').set('on_trip');
+
+                            setState(() {
+                              buttonTitle = 'END TRIP';
+                              buttonColor = Colors.red[900];
+                            });
+
+                            startTimer();
+                          }
+                        },
                       ),
                     ],
                   ),
