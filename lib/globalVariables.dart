@@ -18,6 +18,7 @@ final CameraPosition kGooglePlex = CameraPosition(
 String apiKey = "AIzaSyDu3LOP9fTpiL-Vaa6YECeNDJNb8FFEhqw";
 DatabaseReference tripRequestRef;
 StreamSubscription<Position> positionStream;
+StreamSubscription<Position> carPositionStream;
 final assetAudioPlayer = AssetsAudioPlayer();
 Position currentPosition;
 DatabaseReference rideRef;

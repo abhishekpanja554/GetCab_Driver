@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/data_models/trip_details.dart';
@@ -29,6 +30,26 @@ class _NewTripPageState extends State<NewTripPage> {
   Set<Polyline> _polylines = Set<Polyline>();
   List<LatLng> polylinesCoordinatesList = [];
   PolylinePoints polylinePoints = PolylinePoints();
+  Geolocator geolocator = Geolocator();
+  LocationOptions locationOptions =
+      LocationOptions(accuracy: LocationAccuracy.bestForNavigation);
+  Position carPosition;
+  BitmapDescriptor movingCarIcon;
+
+  void createMarker() {
+    if (movingCarIcon == null) {
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(
+        context,
+        size: Size(2, 2),
+      );
+
+      BitmapDescriptor.fromAssetImage(
+              imageConfiguration, 'images/car_android.png')
+          .then((icon) {
+        movingCarIcon = icon;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -36,9 +57,10 @@ class _NewTripPageState extends State<NewTripPage> {
     super.initState();
   }
 
-  void acceptTrip(){
+  void acceptTrip() {
     String rideId = widget.tripDetails.rideId;
-    rideRef = FirebaseDatabase.instance.reference().child('rideRequest/$rideId');
+    rideRef =
+        FirebaseDatabase.instance.reference().child('rideRequest/$rideId');
     rideRef.child('status').set('accepted');
     rideRef.child('driver_name').set(currentDriverInfo.fullName);
     rideRef.child('phone').set(currentDriverInfo.phone);
@@ -48,8 +70,8 @@ class _NewTripPageState extends State<NewTripPage> {
     rideRef.child('driver_id').set(currentDriverInfo.id);
 
     Map locationMap = {
-      'latitude' : currentPosition.latitude.toString(),
-      'longitude' : currentPosition.longitude.toString(),
+      'latitude': currentPosition.latitude.toString(),
+      'longitude': currentPosition.longitude.toString(),
     };
 
     rideRef.child('driver_location').set(locationMap);
@@ -169,8 +191,37 @@ class _NewTripPageState extends State<NewTripPage> {
     });
   }
 
+  void getLocationUpdates() {
+    carPositionStream = Geolocator.getPositionStream(
+      desiredAccuracy: LocationAccuracy.bestForNavigation,
+      distanceFilter: 4,
+      timeInterval: 200,
+    ).listen((Position position) {
+      currentPosition = position;
+      carPosition = position;
+      LatLng pos = LatLng(position.latitude, position.longitude);
+      Marker carMarker = Marker(
+        markerId: MarkerId('moving'),
+        position: pos,
+        icon: movingCarIcon,
+        infoWindow: InfoWindow(title: 'Current Location'),
+      );
+
+      setState(() {
+        CameraPosition cp = new CameraPosition(
+          target: pos,
+          zoom: 17,
+        );
+        tripMapController.animateCamera(CameraUpdate.newCameraPosition(cp));
+        _markers.removeWhere((element) => element.markerId.value == 'moving');
+        _markers.add(carMarker);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    createMarker();
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -192,7 +243,7 @@ class _NewTripPageState extends State<NewTripPage> {
                 LatLng pickupPosLatLng = widget.tripDetails.pickupCoordinates;
 
                 await getDirection(currentPosLatLng, pickupPosLatLng);
-                // getCurrentPosition();
+                getLocationUpdates();
               },
               circles: _circles,
               markers: _markers,
@@ -245,7 +296,7 @@ class _NewTripPageState extends State<NewTripPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'widget.tripDetails.riderName',
+                            widget.tripDetails.riderName,
                             style: TextStyle(
                               fontFamily: 'Brand-Bold',
                               fontSize: 22,
