@@ -39,10 +39,10 @@ class HelperMethods {
     return directionDetails;
   }
 
-  static int estimateFairs(DirectionDetails details) {
+  static int estimateFairs(DirectionDetails details, int durationVal) {
     double baseFare = 80;
     double distanceFare = (details.distanceValue / 1000) * 8;
-    double timeFare = (details.durationValue / 60) * 5;
+    double timeFare = (durationVal / 60) * 5;
 
     double totalFare = baseFare + distanceFare + timeFare;
 

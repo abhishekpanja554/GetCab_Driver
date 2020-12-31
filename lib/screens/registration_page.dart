@@ -38,7 +38,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   void registerUser() async {
     //show please wait dialog
-    HelperMethods.showProgressDialog(context);
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => ProgressDialog(
+        status: 'Signing you up',
+      ),
+    );
     UserCredential userCredential = await _auth
         .createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text)

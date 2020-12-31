@@ -10,6 +10,7 @@ import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/data_models/trip_details.dart';
 import 'package:uber_clone_driver/helpers/helper_methods.dart';
 import 'package:uber_clone_driver/helpers/map_toolkit_helper.dart';
+import 'package:uber_clone_driver/widgets/payment_dialog.dart';
 import 'package:uber_clone_driver/widgets/progress_dialog.dart';
 import 'package:uber_clone_driver/widgets/taxi_button.dart';
 
@@ -100,10 +101,45 @@ class _NewTripPageState extends State<NewTripPage> {
     };
 
     rideRef.child('driver_location').set(locationMap);
+
+    DatabaseReference rideHistoryRef = FirebaseDatabase.instance
+        .reference()
+        .child('drivers/${currentUser.uid}/ride_history/$rideId');
+
+    rideHistoryRef.set('true');
+  }
+
+  void endTrip() async {
+    timer.cancel();
+    HelperMethods.showProgressDialog(context);
+    LatLng currentLatLng = LatLng(carPosition.latitude, carPosition.longitude);
+    var directionDetails = await HelperMethods.getDirectionDetails(
+        widget.tripDetails.pickupCoordinates, currentLatLng);
+    Navigator.pop(context);
+    int fares = HelperMethods.estimateFairs(directionDetails, timeCounter);
+    rideRef.child('fare').set(fares.toString());
+    rideRef.child('status').set('completed');
+    carPositionStream.cancel();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => PaymentDialog(
+        paymentMethod: widget.tripDetails.paymentMethod,
+        fare: fares,
+      ),
+    );
+
+    totalEarnings(fares);
   }
 
   Future<void> getDirection(LatLng pickLatLng, LatLng destLatLng) async {
-    HelperMethods.showProgressDialog(context);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => ProgressDialog(
+        status: 'Please wait...',
+      ),
+    );
 
     var thisDetails =
         await HelperMethods.getDirectionDetails(pickLatLng, destLatLng);
@@ -260,11 +296,27 @@ class _NewTripPageState extends State<NewTripPage> {
     });
   }
 
-  void startTimer(){
+  void startTimer() {
     const interval = Duration(seconds: 1);
     timer = Timer.periodic(interval, (timer) {
       timeCounter++;
-     });
+    });
+  }
+
+  void totalEarnings(int fares) {
+    DatabaseReference earningRef = FirebaseDatabase.instance
+        .reference()
+        .child('drivers/${currentUser.uid}/earnings');
+
+    earningRef.once().then((DataSnapshot snapshot) {
+      if (snapshot.value != null) {
+        double pastEarnings = double.parse(snapshot.value.toString());
+        double totalEarnings = fares + pastEarnings;
+        earningRef.set(totalEarnings.toString());
+      } else {
+        earningRef.set(fares.toString());
+      }
+    });
   }
 
   void updateTripDetails() async {
@@ -443,7 +495,7 @@ class _NewTripPageState extends State<NewTripPage> {
                         buttonText: buttonTitle,
                         color: buttonColor,
                         onPressed: () async {
-                          if(driverStatus == 'accepted'){
+                          if (driverStatus == 'accepted') {
                             driverStatus = 'arrived';
                             rideRef.child('status').set('arrived');
 
@@ -454,19 +506,23 @@ class _NewTripPageState extends State<NewTripPage> {
 
                             HelperMethods.showProgressDialog(context);
 
-                            await getDirection(widget.tripDetails.pickupCoordinates, widget.tripDetails.destinationCoordinates);
+                            await getDirection(
+                                widget.tripDetails.pickupCoordinates,
+                                widget.tripDetails.destinationCoordinates);
 
                             Navigator.pop(context);
-                          }else if(driverStatus == 'arrived'){
+                          } else if (driverStatus == 'arrived') {
                             driverStatus = 'onTrip';
                             rideRef.child('status').set('on_trip');
 
                             setState(() {
                               buttonTitle = 'END TRIP';
-                              buttonColor = Colors.red[900];
+                              buttonColor = Colors.red[300];
                             });
 
                             startTimer();
+                          } else if (driverStatus == 'onTrip') {
+                            endTrip();
                           }
                         },
                       ),

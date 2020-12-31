@@ -40,7 +40,13 @@ class _LoginPageState extends State<LoginPage> {
 
   void login() async {
     //show please wait dialog
-    HelperMethods.showProgressDialog(context);
+    showDialog(
+      barrierDismissible: false,	
+      context: context,	
+      builder: (BuildContext context) => ProgressDialog(	
+        status: 'Logging you in',	
+      ),	
+    );
 
     UserCredential userCredential;
     try {

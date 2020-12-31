@@ -34,7 +34,13 @@ class PushNotificatioService {
 
   void getRideInfo(String rideId, context) {
     //show please wait dialog
-    HelperMethods.showProgressDialog(context);
+    showDialog(
+      barrierDismissible: false,	
+      context: context,	
+      builder: (BuildContext context) => ProgressDialog(	
+        status: 'Fetching Details',	
+      ),	
+    );
 
     DatabaseReference rideRef =
         FirebaseDatabase.instance.reference().child('rideRequest/$rideId');
@@ -73,7 +79,13 @@ class PushNotificatioService {
         tripDetails.pickupCoordinates = LatLng(pickupLat, pickupLng);
         tripDetails.paymentMethod = paymentMethod;
 
-        HelperMethods.showProgressDialog(context);
+        showDialog(
+          context: context,	
+          barrierDismissible: false,	
+          builder: (BuildContext context) => NotificationDialog(	
+            tripDetails: tripDetails,	
+          ),	
+        );
       }
     });
   }
