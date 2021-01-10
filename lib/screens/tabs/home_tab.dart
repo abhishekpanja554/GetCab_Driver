@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/data_models/driver.dart';
 import 'package:uber_clone_driver/globalVariables.dart';
+import 'package:uber_clone_driver/helpers/helper_methods.dart';
 import 'package:uber_clone_driver/helpers/push_notification_service.dart';
 import 'package:uber_clone_driver/widgets/availability_button.dart';
 import 'package:uber_clone_driver/widgets/confirm_sheet.dart';
@@ -85,15 +86,18 @@ class _HomeTabState extends State<HomeTab> {
 
   void getCurrentDriverInfo() async {
     currentUser = FirebaseAuth.instance.currentUser;
-    DatabaseReference driverRef = FirebaseDatabase.instance.reference().child('drivers/${currentUser.uid}');
+    DatabaseReference driverRef = FirebaseDatabase.instance
+        .reference()
+        .child('drivers/${currentUser.uid}');
     driverRef.once().then((DataSnapshot snapshot) {
-      if(snapshot.value != null){
+      if (snapshot.value != null) {
         currentDriverInfo = Driver.fromSnapshot(snapshot);
       }
     });
     PushNotificatioService pushNotificatioService = PushNotificatioService();
     pushNotificatioService.initialize(context);
     pushNotificatioService.getToken();
+    HelperMethods.getHistory(context);
   }
 
   @override

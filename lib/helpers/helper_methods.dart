@@ -1,9 +1,14 @@
 import 'dart:math';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:uber_clone_driver/data_models/direction_details.dart';
+import 'package:uber_clone_driver/data_models/history.dart';
+import 'package:uber_clone_driver/data_provider.dart';
 import 'package:uber_clone_driver/helpers/network_helper.dart';
 import 'package:uber_clone_driver/widgets/progress_dialog.dart';
 
@@ -55,17 +60,18 @@ class HelperMethods {
     return rand.toDouble();
   }
 
-  static void disableLocationSubscription(){
+  static void disableLocationSubscription() {
     positionStream.pause();
     Geofire.removeLocation(currentUser.uid);
   }
 
-  static void enableLocationSubscription(){
+  static void enableLocationSubscription() {
     positionStream.resume();
-    Geofire.setLocation(currentUser.uid, currentPosition.latitude, currentPosition.longitude);
+    Geofire.setLocation(
+        currentUser.uid, currentPosition.latitude, currentPosition.longitude);
   }
 
-  static void showProgressDialog(context){
+  static void showProgressDialog(context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -73,5 +79,67 @@ class HelperMethods {
         status: 'Please wait...',
       ),
     );
+  }
+
+  static void getHistory(context) {
+    DatabaseReference histRef = FirebaseDatabase.instance
+        .reference()
+        .child('drivers/${currentUser.uid}/earnings');
+
+    histRef.once().then((DataSnapshot snapshot) {
+      if (snapshot.value != null) {
+        String totalEarnings = snapshot.value.toString();
+        Provider.of<AppData>(context, listen: false)
+            .updateEarnings(totalEarnings);
+      }
+    });
+
+    DatabaseReference historyRef = FirebaseDatabase.instance
+        .reference()
+        .child('drivers/${currentUser.uid}/ride_history');
+    historyRef.once().then((DataSnapshot snapshot) {
+      if (snapshot.value != null) {
+        Map<dynamic, dynamic> values = snapshot.value;
+        int tripCount = values.length;
+
+        // update trip count to data provider
+        Provider.of<AppData>(context, listen: false).updateTripCount(tripCount);
+
+        List<String> tripHistoryKeys = [];
+        values.forEach((key, value) {
+          tripHistoryKeys.add(key);
+        });
+
+        // update trip keys to data provider
+        Provider.of<AppData>(context, listen: false)
+            .updateTripKeys(tripHistoryKeys);
+
+        getHistoryData(context);
+      }
+    });
+  }
+
+  static void getHistoryData(context) {
+    var keys = Provider.of<AppData>(context, listen: false).tripHistoryKeys;
+
+    for (String key in keys) {
+      DatabaseReference historyRef =
+          FirebaseDatabase.instance.reference().child('rideRequest/$key');
+
+      historyRef.once().then((DataSnapshot snapshot) {
+        if (snapshot.value != null) {
+          History history = History.fromSnapshot(snapshot);
+          Provider.of<AppData>(context, listen: false)
+              .updateTripHistory(history);
+        }
+      });
+    }
+  }
+
+  static String dateFormatter(String dateStr) {
+    DateTime dateTime = DateTime.parse(dateStr);
+    String formattedDateStr =
+        '${DateFormat.MMMMd().format(dateTime)}, ${DateFormat.y().format(dateTime)} - ${DateFormat.jm().format(dateTime)}';
+    return formattedDateStr;
   }
 }

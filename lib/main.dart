@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uber_clone_driver/data_provider.dart';
+import 'package:uber_clone_driver/screens/history_page.dart';
 import 'package:uber_clone_driver/screens/login_page.dart';
 import 'package:uber_clone_driver/screens/main_page.dart';
 import 'package:uber_clone_driver/screens/registration_page.dart';
@@ -39,20 +42,24 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Brand-Regular',
+    return ChangeNotifierProvider(
+      create: (context) => AppData(),
+      child: MaterialApp(
+        title: 'Cab Driver',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          fontFamily: 'Brand-Regular',
+        ),
+        initialRoute: (currentUser == null) ? LoginPage.id : MainPage.id,
+        routes: {
+          MainPage.id: (context) => MainPage(),
+          RegistrationPage.id: (context) => RegistrationPage(),
+          VehicleInfoPage.id: (context) => VehicleInfoPage(),
+          LoginPage.id: (context) => LoginPage(),
+          HistoryPage.id: (context) => HistoryPage(),
+        },
       ),
-      initialRoute: (currentUser == null) ? LoginPage.id : MainPage.id,
-      routes: {
-        MainPage.id: (context) => MainPage(),
-        RegistrationPage.id: (context) => RegistrationPage(),
-        VehicleInfoPage.id: (context) => VehicleInfoPage(),
-        LoginPage.id: (context) => LoginPage(),
-      },
     );
   }
 }

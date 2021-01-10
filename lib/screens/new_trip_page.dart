@@ -91,7 +91,7 @@ class _NewTripPageState extends State<NewTripPage> {
     rideRef.child('driver_name').set(currentDriverInfo.fullName);
     rideRef.child('phone').set(currentDriverInfo.phone);
     rideRef.child('car_model').set(currentDriverInfo.carModel);
-    rideRef.child('car_color').set(currentDriverInfo.carModel);
+    rideRef.child('car_color').set(currentDriverInfo.carColor);
     rideRef.child('vehicle_number').set(currentDriverInfo.vehicleNumber);
     rideRef.child('driver_id').set(currentDriverInfo.id);
 
