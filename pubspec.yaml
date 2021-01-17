@@ -45,6 +45,9 @@ dependencies:
   toast: ^0.1.5
   maps_toolkit: ^1.1.0+2
   intl: ^0.16.1
+  motion_tab_bar: ^0.1.5
+  lite_rolling_switch: ^0.1.1
+
 
 dev_dependencies:
   flutter_test:

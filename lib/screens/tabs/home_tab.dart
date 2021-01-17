@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
@@ -12,8 +11,7 @@ import 'package:uber_clone_driver/data_models/driver.dart';
 import 'package:uber_clone_driver/globalVariables.dart';
 import 'package:uber_clone_driver/helpers/helper_methods.dart';
 import 'package:uber_clone_driver/helpers/push_notification_service.dart';
-import 'package:uber_clone_driver/widgets/availability_button.dart';
-import 'package:uber_clone_driver/widgets/confirm_sheet.dart';
+import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 
 class HomeTab extends StatefulWidget {
   @override
@@ -112,7 +110,7 @@ class _HomeTabState extends State<HomeTab> {
       children: [
         GoogleMap(
           padding: EdgeInsets.only(
-            top: 135,
+            top: 120,
           ),
           initialCameraPosition: kGooglePlex,
           myLocationEnabled: true,
@@ -125,56 +123,82 @@ class _HomeTabState extends State<HomeTab> {
           },
         ),
         Container(
-          height: 135,
-          width: double.infinity,
-          color: BrandColors.colorPrimary,
-        ),
-        Positioned(
-          top: 60,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AvailabilityButton(
-                buttonText: availabilityText,
-                color: availabilityColor,
-                onPressed: () {
-                  showModalBottomSheet(
-                    isDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) => ConfirmSheet(
-                      title: !isAvailable ? 'GO ONLINE' : 'GO OFFLINE',
-                      subTitle: !isAvailable
-                          ? 'You are about to become available to recieve trip requests'
-                          : 'You will stop recieving requests',
-                      onPressed: () {
-                        if (!isAvailable) {
-                          goOnline();
-                          getLocationUpdates();
-                          Navigator.pop(context);
-                          setState(() {
-                            availabilityColor = BrandColors.colorGreen;
-                            availabilityText = 'GO OFFLINE';
-                            isAvailable = true;
-                          });
-                        } else {
-                          goOffline();
-                          Navigator.pop(context);
-                          setState(() {
-                            availabilityColor = BrandColors.colorOrange;
-                            availabilityText = 'GO ONLINE';
-                            isAvailable = false;
-                          });
-                        }
-                      },
-                    ),
-                  );
-                },
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(0xFF3F424B),
+              borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(25),
+                bottomLeft: Radius.circular(25),
               ),
-            ],
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 15,
+                  spreadRadius: 0.5,
+                  offset: Offset(
+                    0.7,
+                    0.7,
+                  ),
+                ),
+              ],
+            ),
+            height: 120,
+            width: double.infinity,
           ),
         ),
+        Container(
+          margin: EdgeInsets.only(
+            top: 33,
+          ),
+          height: 170,
+          padding: EdgeInsets.symmetric(
+            vertical: 37,
+            horizontal: 50,
+          ),
+          width: double.infinity,
+          alignment: Alignment.center,
+          child: LiteRollingSwitch(
+            value: false,
+            textOn: 'ONLINE',
+            textOff: 'OFFLINE',
+            colorOn: BrandColors.colorGreen,
+            colorOff: Color(0xFFF7444E),
+            iconOn: Icons.online_prediction,
+            iconOff: Icons.power_settings_new_rounded,
+            textSize: 16.0,
+            onChanged: (bool state) {
+              if (state && !isAvailable) {
+                goOnline();
+                getLocationUpdates();
+                setState(() {
+                  isAvailable = true;
+                });
+              } else if (isAvailable && !state) {
+                goOffline();
+                setState(() {
+                  isAvailable = false;
+                });
+              }
+            },
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(
+            top: 20,
+          ),
+          width: double.infinity,
+          height: 100,
+          alignment: Alignment.center,
+          child: Text(
+            'Welcome Driver',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Brand-Regular',
+              fontSize: 16,
+            ),
+          ),
+        )
       ],
     );
   }

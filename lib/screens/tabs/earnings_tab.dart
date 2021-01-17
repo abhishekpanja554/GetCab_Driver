@@ -26,7 +26,7 @@ class EarningsTab extends StatelessWidget {
                   style: TextStyle(color: Colors.white),
                 ),
                 Text(
-                  '₹${Provider.of<AppData>(context).earnings}',
+                  '₹${Provider.of<AppData>(context).earnings??'0'}',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 40,

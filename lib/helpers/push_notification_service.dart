@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_clone_driver/data_models/trip_details.dart';
 import 'package:uber_clone_driver/globalVariables.dart';
-import 'package:uber_clone_driver/helpers/helper_methods.dart';
 import 'package:uber_clone_driver/widgets/notification_dialog.dart';
 import 'package:uber_clone_driver/widgets/progress_dialog.dart';
 
@@ -90,7 +89,7 @@ class PushNotificatioService {
     });
   }
 
-  Future<String> getToken() async {
+  Future getToken() async {
     String token = await _firebaseMessaging.getToken();
     DatabaseReference tokenref = FirebaseDatabase.instance
         .reference()

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:motion_tab_bar/MotionTabController.dart';
+import 'package:motion_tab_bar/motiontabbar.dart';
 // import 'package:geolocator/geolocator.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
@@ -15,7 +17,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  MotionTabController _tabController;
 
   int selectedTabIndex = 0;
 
@@ -28,7 +30,11 @@ class _MainPageState extends State<MainPage>
 
   @override
   void initState() {
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = MotionTabController(
+      initialIndex: 1,
+      vsync: this,
+      length: 4,
+    );
     super.initState();
   }
 
@@ -41,52 +47,25 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: _tabController,
+      body: IndexedStack(
         children: [
           HomeTab(),
           EarningsTab(),
           RatingsTab(),
           ProfileTab(),
         ],
+        index: selectedTabIndex,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.credit_card,
-            ),
-            label: 'Earnings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.star,
-            ),
-            label: 'Ratings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: 'Profile',
-          ),
-        ],
-        unselectedItemColor: BrandColors.colorIcon,
-        selectedItemColor: BrandColors.colorOrange,
-        showSelectedLabels: true,
-        selectedLabelStyle: TextStyle(
-          fontSize: 12,
+      bottomNavigationBar: MotionTabBar(
+        labels: ["Home", "Earnings", "Ratings", "Profile"],
+        initialSelectedTab: "Home",
+        tabIconColor: Color(0xFF3F424B),
+        tabSelectedColor: BrandColors.colorGreen,
+        onTabItemSelected: onItemClicked,
+        icons: [Icons.home, Icons.credit_card, Icons.star, Icons.person],
+        textStyle: TextStyle(
+          color: Colors.black,
         ),
-        type: BottomNavigationBarType.fixed,
-        onTap: onItemClicked,
-        currentIndex: selectedTabIndex,
       ),
     );
   }

@@ -30,7 +30,7 @@ class HistoryTile extends StatelessWidget {
                     Expanded(
                         child: Container(
                             child: Text(
-                      history.pickup,
+                      (history.pickup == null) ? '' : history.pickup,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontSize: 18),
                     ))),
@@ -38,7 +38,7 @@ class HistoryTile extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      '\$${history.fares}',
+                      '\$${(history.fares == null) ? '' : history.fares}',
                       style: TextStyle(
                           fontFamily: 'Brand-Bold',
                           fontSize: 16,
@@ -62,7 +62,7 @@ class HistoryTile extends StatelessWidget {
                     width: 18,
                   ),
                   Text(
-                    history.destination,
+                    (history.destination == null) ? '' : history.destination,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 18),
                   ),
