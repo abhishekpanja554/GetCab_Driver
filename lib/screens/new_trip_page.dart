@@ -128,7 +128,7 @@ class _NewTripPageState extends State<NewTripPage> {
         fare: fares,
       ),
     );
-
+    HelperMethods.getHistory(context);
     totalEarnings(fares);
   }
 

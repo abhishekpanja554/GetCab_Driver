@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uber_clone_driver/data_models/direction_details.dart';
+import 'package:uber_clone_driver/data_models/driver.dart';
 import 'package:uber_clone_driver/data_models/history.dart';
 import 'package:uber_clone_driver/data_provider.dart';
 import 'package:uber_clone_driver/helpers/network_helper.dart';
@@ -60,6 +61,17 @@ class HelperMethods {
     return rand.toDouble();
   }
 
+  static void getLatestDriverInfo() {
+    DatabaseReference driverRef = FirebaseDatabase.instance
+        .reference()
+        .child('drivers/${currentUser.uid}');
+    driverRef.once().then((DataSnapshot snapshot) {
+      if (snapshot.value != null) {
+        currentDriverInfo = Driver.fromSnapshot(snapshot);
+      }
+    });
+  }
+
   static void disableLocationSubscription() {
     positionStream.pause();
     Geofire.removeLocation(currentUser.uid);
@@ -82,18 +94,6 @@ class HelperMethods {
   }
 
   static void getHistory(context) {
-    DatabaseReference histRef = FirebaseDatabase.instance
-        .reference()
-        .child('drivers/${currentUser.uid}/earnings');
-
-    histRef.once().then((DataSnapshot snapshot) {
-      if (snapshot.value != null) {
-        String totalEarnings = snapshot.value.toString();
-        Provider.of<AppData>(context, listen: false)
-            .updateEarnings(totalEarnings);
-      }
-    });
-
     DatabaseReference historyRef = FirebaseDatabase.instance
         .reference()
         .child('drivers/${currentUser.uid}/ride_history');
@@ -120,7 +120,11 @@ class HelperMethods {
   }
 
   static void getHistoryData(context) {
+    totalEarning = 0;
+    Provider.of<AppData>(context, listen: false)
+        .updateEarnings(totalEarning.toString());
     var keys = Provider.of<AppData>(context, listen: false).tripHistoryKeys;
+    Provider.of<AppData>(context, listen: false).updateTripHistory(null);
 
     for (String key in keys) {
       DatabaseReference historyRef =
@@ -129,8 +133,11 @@ class HelperMethods {
       historyRef.once().then((DataSnapshot snapshot) {
         if (snapshot.value != null) {
           History history = History.fromSnapshot(snapshot);
+          totalEarning = totalEarning + int.parse(history.fares);
           Provider.of<AppData>(context, listen: false)
               .updateTripHistory(history);
+          Provider.of<AppData>(context, listen: false)
+              .updateEarnings(totalEarning.toString());
         }
       });
     }

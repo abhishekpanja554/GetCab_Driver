@@ -23,3 +23,4 @@ final assetAudioPlayer = AssetsAudioPlayer();
 Position currentPosition;
 DatabaseReference rideRef;
 Driver currentDriverInfo;
+int totalEarning = 0;

@@ -9,7 +9,13 @@ class HistoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: Image.asset('images/history-background.png').image,
+          fit: BoxFit.fill,
+        ),
+      ),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: <Widget>[
@@ -38,7 +44,7 @@ class HistoryTile extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      '\$${(history.fares == null) ? '' : history.fares}',
+                      '₹${(history.fares == null) ? '' : history.fares}',
                       style: TextStyle(
                           fontFamily: 'Brand-Bold',
                           fontSize: 16,

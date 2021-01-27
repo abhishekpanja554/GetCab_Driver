@@ -10,6 +10,7 @@ import 'package:uber_clone_driver/screens/login_page.dart';
 import 'package:uber_clone_driver/screens/main_page.dart';
 import 'package:uber_clone_driver/screens/registration_page.dart';
 import 'package:uber_clone_driver/screens/vehicleInfo_page.dart';
+import 'package:uber_clone_driver/screens/profile_edit_page.dart';
 
 import 'globalVariables.dart';
 
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
           MainPage.id: (context) => MainPage(),
           RegistrationPage.id: (context) => RegistrationPage(),
           VehicleInfoPage.id: (context) => VehicleInfoPage(),
+          ProfileEditPage.id: (context) => ProfileEditPage(),
           LoginPage.id: (context) => LoginPage(),
           HistoryPage.id: (context) => HistoryPage(),
         },

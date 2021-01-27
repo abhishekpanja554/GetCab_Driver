@@ -16,12 +16,12 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: BrandColors.colorPrimary,
+        backgroundColor: Color(0xFF3F424B),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Trip History',
+              'Trips History',
             ),
             Icon(
               Icons.history,
@@ -36,32 +36,36 @@ class _HistoryPageState extends State<HistoryPage> {
               Navigator.pop(context);
             }),
       ),
-      body:
-          (Provider.of<AppData>(context, listen: false).tripHistory.length <= 0)
-              ? Center(
-                  child: Text(
-                    'You have no ride history',
-                    style: TextStyle(
-                      fontFamily: 'Brand-Bold',
-                      fontSize: 16,
-                    ),
-                  ),
-                )
-              : ListView.separated(
-                  padding: EdgeInsets.all(0),
-                  itemBuilder: (BuildContext context, int index) {
-                    // int len = Provider.of<AppData>(context).tripHistory.length;
-                    return HistoryTile(
-                      history: Provider.of<AppData>(context, listen: false)
-                          .tripHistory[index],
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) =>
-                      BrandDivider(),
-                  itemCount: Provider.of<AppData>(context).tripHistory.length,
-                  physics: ClampingScrollPhysics(),
-                  shrinkWrap: true,
+      body: (Provider.of<AppData>(context, listen: false).tripHistory.length <=
+                  0 ||
+              Provider.of<AppData>(context, listen: false).tripHistory[0] ==
+                  null)
+          ? Center(
+              child: Text(
+                'You have no ride history',
+                style: TextStyle(
+                  fontFamily: 'Brand-Bold',
+                  fontSize: 16,
                 ),
+              ),
+            )
+          : ListView.separated(
+              padding: EdgeInsets.all(0),
+              itemBuilder: (BuildContext context, int index) {
+                return Card(
+                  elevation: 3,
+                  child: HistoryTile(
+                    history: Provider.of<AppData>(context, listen: false)
+                        .tripHistory[index],
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) =>
+                  BrandDivider(),
+              itemCount: Provider.of<AppData>(context).tripHistory.length,
+              physics: ClampingScrollPhysics(),
+              shrinkWrap: true,
+            ),
     );
   }
 }

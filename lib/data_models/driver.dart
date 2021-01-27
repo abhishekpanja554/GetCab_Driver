@@ -22,6 +22,7 @@ class Driver {
   Driver.fromSnapshot(DataSnapshot snapshot){
     id = snapshot.key;
     phone = snapshot.value['phone'];
+    email = snapshot.value['email'];
     fullName = snapshot.value['fullname'];
     carModel = snapshot.value['vehicle_details']['car_model'];
     carColor = snapshot.value['vehicle_details']['car_color'];
