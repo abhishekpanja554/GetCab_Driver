@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/data_provider.dart';
 import 'package:uber_clone_driver/widgets/HistoryTile.dart';
 import 'package:uber_clone_driver/widgets/brand_divider.dart';

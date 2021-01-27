@@ -7,6 +7,7 @@ class History {
   String status;
   String createdAt;
   String paymentMethod;
+  String rating;
 
   History({
     this.pickup,
@@ -15,6 +16,7 @@ class History {
     this.status,
     this.createdAt,
     this.paymentMethod,
+    this.rating,
   });
 
   History.fromSnapshot(DataSnapshot snapshot) {
@@ -24,5 +26,6 @@ class History {
     createdAt = snapshot.value['created_at'];
     status = snapshot.value['status'];
     paymentMethod = snapshot.value['payment_method'];
+    rating = snapshot.value['rating'];
   }
 }
