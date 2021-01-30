@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
-import 'package:uber_clone_driver/helpers/helper_methods.dart';
 import 'package:uber_clone_driver/screens/main_page.dart';
 import 'package:uber_clone_driver/screens/registration_page.dart';
 import 'package:uber_clone_driver/widgets/progress_dialog.dart';

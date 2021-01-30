@@ -23,11 +23,14 @@ class _ProfileTabState extends State<ProfileTab> {
     var mediaQuery = MediaQuery.of(context);
     return RefreshIndicator(
       key: _refreshIndicatorKey,
-      onRefresh: ()async{
+      backgroundColor: Color(0xFF6ACE7A),
+      displacement: 80,
+      color: Color(0xFF293453),
+      onRefresh: () async {
         setState(() {
           HelperMethods.getLatestDriverInfo();
         });
-        
+
         await Future.delayed(Duration(seconds: 1));
       },
       child: SingleChildScrollView(
@@ -319,33 +322,58 @@ class _ProfileTabState extends State<ProfileTab> {
                           ),
                         ),
                       ),
-                    )
-                  ],
-                ),
-              ),
-              AnimatedPositioned(
-                duration: Duration(milliseconds: 400),
-                curve: Curves.easeOutExpo,
-                right: 20,
-                bottom: Provider.of<AppData>(context, listen: false)
-                        .editButtonVisible
-                    ? (mediaQuery.size.height - 810)
-                    : (mediaQuery.size.height - 950),
-                child: FloatingActionButton(
-                  tooltip: 'Edit Profile',
-                  backgroundColor: Color(0xFFD1A153),
-                  elevation: 4,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProfileEditPage(),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    AnimatedContainer(
+                      curve: Curves.easeOutExpo,
+                      duration: Duration(
+                        milliseconds: 500,
                       ),
-                    );
-                  },
-                  child: Icon(
-                    Icons.edit,
-                  ),
+                      margin: Provider.of<AppData>(context, listen: false)
+                              .editButtonVisible
+                          ? EdgeInsets.only(left: 0)
+                          : EdgeInsets.only(left: 200),
+                      alignment: Alignment.center,
+                      height: 60,
+                      width: 147,
+                      decoration: BoxDecoration(
+                        color: BrandColors.colorGreen,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, ProfileEditPage.id);
+                        },
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 10,
+                            ),
+                            CircleAvatar(
+                              backgroundColor: Color(0xFF293453),
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              'Edit Profile',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Brand-Regular',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

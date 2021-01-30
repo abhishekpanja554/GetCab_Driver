@@ -5,9 +5,14 @@ import 'package:uber_clone_driver/globalVariables.dart';
 import 'package:uber_clone_driver/screens/main_page.dart';
 import 'package:uber_clone_driver/widgets/taxi_button.dart';
 
-class VehicleInfoPage extends StatelessWidget {
+class VehicleInfoPage extends StatefulWidget {
   static const String id = 'vehicleInfoPage';
 
+  @override
+  _VehicleInfoPageState createState() => _VehicleInfoPageState();
+}
+
+class _VehicleInfoPageState extends State<VehicleInfoPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   void showSnackBar(String title) {
@@ -23,7 +28,9 @@ class VehicleInfoPage extends StatelessWidget {
   }
 
   TextEditingController carModelController = TextEditingController();
+
   TextEditingController carColorController = TextEditingController();
+
   TextEditingController vehicleNumberController = TextEditingController();
 
   void updateProfile(context) {

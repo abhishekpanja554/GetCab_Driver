@@ -1,9 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/globalVariables.dart';
 import 'package:uber_clone_driver/helpers/helper_methods.dart';
-import 'package:uber_clone_driver/screens/main_page.dart';
 import 'package:uber_clone_driver/widgets/taxi_button.dart';
 
 class ProfileEditPage extends StatefulWidget {
@@ -24,26 +24,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   TextEditingController carColorController = TextEditingController();
   TextEditingController vehicleNumberController = TextEditingController();
 
-  void showSnackBar(String title) {
-    final snackBar = SnackBar(
-      content: Text(
-        title,
-        style: TextStyle(
-          fontSize: 15,
-        ),
-      ),
-    );
-    scaffoldKey.currentState.showSnackBar(snackBar);
-  }
-
   void updateProfile(context) {
     String uid = currentUser.uid;
     DatabaseReference dbRef = FirebaseDatabase.instance
         .reference()
         .child('drivers/$uid/vehicle_details');
-    DatabaseReference dbPersonRef = FirebaseDatabase.instance
-        .reference()
-        .child('drivers/$uid');
+    DatabaseReference dbPersonRef =
+        FirebaseDatabase.instance.reference().child('drivers/$uid');
 
     Map vehicleDetails = {
       'car_model': carModelController.text,
@@ -113,7 +100,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     ),
                     TextField(
                       controller: emailController,
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         labelText: 'Email',
                         hintStyle: TextStyle(
@@ -130,7 +117,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     ),
                     TextField(
                       controller: phoneController,
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                         labelText: 'Phone',
                         hintStyle: TextStyle(
@@ -205,32 +192,63 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             RegExp(r"^[a-z]{2}[0-9]{2}[a-z]{1,2}[0-9]{4}$");
 
                         if (fullnameController.text.length < 3) {
-                          showSnackBar('Please provide a valid Fullname');
+                          Toast.show(
+                            "Please provide a valid Fullname",
+                            context,
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.BOTTOM,
+                          );
+
                           return;
                         }
 
                         if (emailController.text.length < 3) {
-                          showSnackBar('Please provide a valid email');
+                          Toast.show(
+                            "Please provide a valid Email",
+                            context,
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.BOTTOM,
+                          );
                           return;
                         }
 
                         if (phoneController.text.length < 10) {
-                          showSnackBar('Please provide a valid phone');
+                          Toast.show(
+                            "Please provide a valid phone number",
+                            context,
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.BOTTOM,
+                          );
                           return;
                         }
                         if (carModelController.text.length < 3) {
-                          showSnackBar('Please provide a valid car Model');
+                          Toast.show(
+                            "Please provide a valid car model",
+                            context,
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.BOTTOM,
+                          );
                           return;
                         }
 
                         if (carColorController.text.length < 3) {
-                          showSnackBar('Please provide a valid color');
+                          Toast.show(
+                            "Please provide a valid car color",
+                            context,
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.BOTTOM,
+                          );
                           return;
                         }
 
                         if (vehicleNumberController.text.length < 3 ||
                             exp.hasMatch(vehicleNumberController.text)) {
-                          showSnackBar('Please provide a valid vehicle number');
+                          Toast.show(
+                            "Please provide a valid vehicle number",
+                            context,
+                            duration: Toast.LENGTH_LONG,
+                            gravity: Toast.BOTTOM,
+                          );
                           return;
                         }
 
