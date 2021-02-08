@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:uber_clone_driver/data_models/driver.dart';
 import 'package:uber_clone_driver/data_models/history.dart';
 
 class AppData extends ChangeNotifier {
@@ -7,6 +8,12 @@ class AppData extends ChangeNotifier {
   List<String> tripHistoryKeys = [];
   List<History> tripHistory = [];
   bool editButtonVisible = true;
+  Driver currentUser;
+
+  void updateLatestInfo(Driver newInfo){
+    currentUser = newInfo;
+    notifyListeners();
+  }
 
   void updateVisibility( bool newState){
     editButtonVisible = newState;

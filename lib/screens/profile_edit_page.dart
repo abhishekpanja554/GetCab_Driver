@@ -4,10 +4,14 @@ import 'package:toast/toast.dart';
 import 'package:uber_clone_driver/brand_colors.dart';
 import 'package:uber_clone_driver/globalVariables.dart';
 import 'package:uber_clone_driver/helpers/helper_methods.dart';
+import 'package:uber_clone_driver/widgets/progress_dialog.dart';
 import 'package:uber_clone_driver/widgets/taxi_button.dart';
 
 class ProfileEditPage extends StatefulWidget {
   static const String id = 'profileeditpage';
+  final BuildContext ancestorContext;
+
+  ProfileEditPage({this.ancestorContext});
 
   @override
   _ProfileEditPageState createState() => _ProfileEditPageState();
@@ -24,7 +28,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   TextEditingController carColorController = TextEditingController();
   TextEditingController vehicleNumberController = TextEditingController();
 
-  void updateProfile(context) {
+  void updateProfile() async {
     String uid = currentUser.uid;
     DatabaseReference dbRef = FirebaseDatabase.instance
         .reference()
@@ -43,14 +47,27 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
     dbRef.set(vehicleDetails);
 
-    HelperMethods.getLatestDriverInfo();
+    HelperMethods.getLatestDriverInfo(widget.ancestorContext);
 
-    Navigator.pop(context);
+    showDialog(
+      barrierDismissible: false,
+      context: scaffoldKey.currentContext,
+      builder: (BuildContext context) => ProgressDialog(
+        status: 'Updating',
+      ),
+    );
+
+    await Future.delayed(Duration(seconds: 1), () {
+      Navigator.pop(context);
+    });
+
+    Navigator.pop(context, 'close');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Color(0xFF3F424B),
         title: Row(
@@ -252,7 +269,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           return;
                         }
 
-                        updateProfile(context);
+                        updateProfile();
                       },
                     ),
                   ],

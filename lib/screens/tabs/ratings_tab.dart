@@ -49,8 +49,10 @@ class RatingsTab extends StatelessWidget {
                 child: Container(
                   height: (mediaQuery.size.height - 200),
                   width: mediaQuery.size.width,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10,
+                  padding: EdgeInsets.only(
+                    top: 10,
+                    left: 10,
+                    right: 10,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -75,33 +77,33 @@ class RatingsTab extends StatelessWidget {
                             ),
                           ),
                         )
-                      : Column(
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ListView.separated(
-                              padding: EdgeInsets.all(0),
-                              itemBuilder: (BuildContext context, int index) {
-                                return Card(
-                                  elevation: 3,
-                                  child: RatingTile(
-                                    history: Provider.of<AppData>(context,
-                                            listen: false)
-                                        .tripHistory[index],
-                                  ),
-                                );
-                              },
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      BrandDivider(),
-                              itemCount: Provider.of<AppData>(context)
-                                  .tripHistory
-                                  .length,
-                              physics: ClampingScrollPhysics(),
-                              shrinkWrap: true,
-                            ),
-                          ],
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              ListView.separated(
+                                padding: EdgeInsets.all(0),
+                                itemBuilder:
+                                    (BuildContext context, int index) {
+                                  return Card(
+                                    elevation: 3,
+                                    child: RatingTile(
+                                      history: Provider.of<AppData>(context,
+                                              listen: false)
+                                          .tripHistory[index],
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        BrandDivider(),
+                                itemCount: Provider.of<AppData>(context)
+                                    .tripHistory
+                                    .length,
+                                physics: ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                              ),
+                            ],
+                          ),
                         ),
                 ),
               ),

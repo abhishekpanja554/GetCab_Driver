@@ -50,26 +50,30 @@ class _RatingTileState extends State<RatingTile> {
                       width: 18,
                     ),
                     Expanded(
-                        child: Container(
-                            child: Text(
-                      (widget.history.pickup == null)
-                          ? ''
-                          : widget.history.pickup,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 18),
-                    ))),
+                      child: Container(
+                        child: Text(
+                          (widget.history.pickup == null)
+                              ? ''
+                              : widget.history.pickup,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       width: 5,
                     ),
-                    Row(
-                      children: [
-                        for (var i in list)
-                          Icon(
-                            Icons.star,
-                            color: Colors.yellow[900],
+                    list == null || list.isEmpty
+                        ? Text('')
+                        : Row(
+                            children: [
+                              for (var i in list)
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.yellow[900],
+                                ),
+                            ],
                           ),
-                      ],
-                    ),
                   ],
                 ),
               ),

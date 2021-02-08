@@ -61,13 +61,15 @@ class HelperMethods {
     return rand.toDouble();
   }
 
-  static void getLatestDriverInfo() {
+  static void getLatestDriverInfo(context) {
     DatabaseReference driverRef = FirebaseDatabase.instance
         .reference()
         .child('drivers/${currentUser.uid}');
     driverRef.once().then((DataSnapshot snapshot) {
       if (snapshot.value != null) {
         currentDriverInfo = Driver.fromSnapshot(snapshot);
+        Provider.of<AppData>(context, listen: false)
+            .updateLatestInfo(currentDriverInfo);
       }
     });
   }
